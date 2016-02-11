@@ -1,0 +1,77 @@
+:toc:
+
+
+== Elasticsearch
+
+-----
+cd ~/Docker/elk/elasticsearch
+docker build -t elasticsearch .
+# docker run -p 9200:9200 --net elk1 -h es1 -d --name es1 elasticsearch
+docker run -p 9200:9200 --net elk1 -h es1 -d -v /home/sachse_t/Docker/elk/elasticsearch/config:/usr/share/elasticsearch/config --name es1 elasticsearch
+-----
+
+Web Frontend (Head)::
+http://localhost:9200/_plugin/head/
+
+Konfiguaration::
+https://gist.github.com/zsprackett/8546403
+
+== Logstash
+
+-----
+cd ~/Docker/elk/logstash
+docker build -t logstash .
+docker run --net elk1 -h ls1 -d -v /home/sachse_t/Docker/elk/logstash/data:/data -v /home/sachse_t/Docker/elk/logstash/config:/config --name ls1 logstash
+-----
+
+=== Grok
+
+Grok Constructor::
+http://grokconstructor.appspot.com/
+
+== Kibana
+
+-----
+cd ~/Docker/elk/kibana
+docker build -t kibana .
+docker run -p 5601:5601 --net elk1 -h kb1 -d -v /home/sachse_t/Docker/elk/kibana/config:/kibana/config --name kb1 kibana
+-----
+
+Web Frontend::
+http://localhost.osp-dd.de:5601
+
+Tutorial::
+https://www.timroes.de/2015/02/07/kibana-4-tutorial-part-1-introduction/ +
+https://www.digitalocean.com/community/tutorials/how-to-use-kibana-dashboards-and-visualizations
+
+Grok Patterns::
+https://github.com/elastic/logstash/blob/v1.4.2/patterns/grok-patterns
+
+=== Pattern für errlog
+
+-----
+\A%{NOTSPACE}%{SPACE}%{TIME}%{SPACE}%{HOSTNAME}%{SPACE}%{INT}%{SPACE}%{USER}%{SPACE}%{PROG}%{SPACE}%{JAVALOGMESSAGE}
+
+
+\A%{NOTSPACE:datum}%{SPACE}%{TIME:zeit}%{SPACE}%{HOSTNAME:hostname}%{SPACE}%{INT:pid}%{SPACE}%{USER:nutzer}%{SPACE}%{PROG:programm}%{SPACE}%{JAVALOGMESSAGE:nachricht}
+
+\A%{NOTSPACE:datum}%{SPACE}%{TIME:zeit}%{SPACE}%{HOSTNAME:hostname}%{SPACE}%{INT:pid}%{SPACE}%{USER:nutzer}%{SPACE}%{PROG:programm}%{SPACE}%{GREEDYDATA:nachricht}
+-----
+
+.-t 012 -s 5
+-----
+\A%{DATA}-t%{SPACE}%{NUMBER}%{SPACE}-s%{SPACE}%{NUMBER}
+
+\A%{DATA}-t%{SPACE}%{NUMBER:tag}%{SPACE}-s%{SPACE}%{NUMBER:lvs}
+-----
+
+== Quellen
+
+http://elk-docker.readthedocs.org/ +
+https://jsonformatter.curiousconcept.com/ +
+
+== Netzwerk für Docker
+
+------
+docker network create elk1
+------
