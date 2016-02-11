@@ -1,0 +1,4 @@
+network.host: 0.0.0.0
+clustename: logstash
+node.name: "smoker1"
+index.number_of_replicas: 0
