@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     logstash-filter-errlog (0.1.0)
-      logstash-core (>= 2.0.0, < 3.0.0)
+      logstash-core (>= 2.0.0.beta2, < 3.0.0)
 
 GEM
   remote: https://rubygems.org/

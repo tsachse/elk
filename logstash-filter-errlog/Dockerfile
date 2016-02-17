@@ -1,6 +1,6 @@
 FROM java:8-jre
 
-RUN apt-get update && apt-get install -y --no-install-recommends tar curl && apt-get autoremove -y && apt-get clean
+RUN apt-get update && apt-get install -y --no-install-recommends tar curl git && apt-get autoremove -y && apt-get clean
 
 ENV JRUBY_VERSION 1.7.24
 
@@ -21,3 +21,5 @@ RUN chown -R devel:users /opt/jruby-$JRUBY_VERSION
 USER devel
 
 RUN echo 'export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/opt/jruby-1.7.24/bin' >>/home/devel/.profile
+WORKDIR /Code
+RUN bundle install

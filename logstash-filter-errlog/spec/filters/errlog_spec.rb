@@ -26,4 +26,37 @@ describe LogStash::Filters::Errlog do
       insist { subject["@timestamp"] } == LogStash::Timestamp.new(Time.strptime('2016/01/29 10:05:12+01:00', '%Y/%m/%d %H:%M:%S%z'))
     end
   end
+
+  describe "Folgezeilen behandeln" do
+    let(:config) do <<-CONFIG
+      filter {
+        errlog {
+        }
+      }
+    CONFIG
+    end
+
+    sample(["2016/01/29\t10:05:12\tddhpit01\t11773\thdllv\tdueb_ftp.pl\tSIGTERM erhalten","Folgezeile"]) do
+      expect(subject).to be_a(Array)
+      insist { subject.size } == 2
+
+      insist { subject[0]["datum"] } == "2016/01/29"
+      insist { subject[0]["zeit"] } == "10:05:12"
+      insist { subject[0]["hostname"] } == "ddhpit01"
+      insist { subject[0]["pid"] } == "11773"
+      insist { subject[0]["nutzer"] } == "hdllv"
+      insist { subject[0]["programm"] } == "dueb_ftp.pl"
+      insist { subject[0]["nachricht"] } == "SIGTERM erhalten"
+      insist { subject[0]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime('2016/01/29 10:05:12+01:00', '%Y/%m/%d %H:%M:%S%z'))
+
+      insist { subject[1]["datum"] } == "2016/01/29"
+      insist { subject[1]["zeit"] } == "10:05:12"
+      insist { subject[1]["hostname"] } == "ddhpit01"
+      insist { subject[1]["pid"] } == "11773"
+      insist { subject[1]["nutzer"] } == "hdllv"
+      insist { subject[1]["programm"] } == "dueb_ftp.pl"
+      insist { subject[1]["nachricht"] } == "Folgezeile"
+      insist { subject[1]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime('2016/01/29 10:05:12+01:00', '%Y/%m/%d %H:%M:%S%z'))
+    end
+  end
 end
