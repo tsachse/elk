@@ -42,7 +42,10 @@ http://localhost.osp-dd.de:5601
 
 Tutorial::
 https://www.timroes.de/2015/02/07/kibana-4-tutorial-part-1-introduction/ +
-https://www.digitalocean.com/community/tutorials/how-to-use-kibana-dashboards-and-visualizations
+https://www.digitalocean.com/community/tutorials/how-to-use-kibana-dashboards-and-visualizations +
+https://www.import.io/post/kinesis-and-kibana/ +
+http://blog.comperiosearch.com/blog/2015/02/09/kibana-4-beer-analytics-engine/ +
+
 
 Grok Patterns::
 https://github.com/elastic/logstash/blob/v1.4.2/patterns/grok-patterns
