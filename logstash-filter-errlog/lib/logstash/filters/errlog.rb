@@ -1,7 +1,7 @@
 # encoding: utf-8
 require "logstash/filters/base"
 require "logstash/namespace"
-require "date"
+require File.dirname(__FILE__) + '/../helpers/' + 'dueb_helper.rb'
 
 # Der Filter dient zum Verarbeiten von errlog-Dateien
 class LogStash::Filters::Errlog < LogStash::Filters::Base
@@ -34,6 +34,8 @@ class LogStash::Filters::Errlog < LogStash::Filters::Base
     @pid      = 0
     @nutzer   = 'X'
     @programm = 'X'
+
+    @dueb_helper = DuebHelper.new
   end # def register
 
   public
@@ -61,6 +63,9 @@ class LogStash::Filters::Errlog < LogStash::Filters::Base
 
     event["nachricht"] = f.join("\t")
     event["@timestamp"] = LogStash::Timestamp.new(Time.strptime("#{event["datum"]} #{event["zeit"]}+01:00", '%Y/%m/%d %H:%M:%S%z'))
+
+    # Ereignisse Datenuebernahme untersuchen
+    @dueb_helper.parse(event)
 
     # filter_matched should go in the last line of our successful code
     filter_matched(event)
