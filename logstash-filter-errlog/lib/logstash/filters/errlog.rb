@@ -2,6 +2,7 @@
 require "logstash/filters/base"
 require "logstash/namespace"
 require File.dirname(__FILE__) + '/../helpers/' + 'dueb_helper.rb'
+require 'time'
 
 # Der Filter dient zum Verarbeiten von errlog-Dateien
 class LogStash::Filters::Errlog < LogStash::Filters::Base
@@ -62,7 +63,7 @@ class LogStash::Filters::Errlog < LogStash::Filters::Base
     end
 
     event["nachricht"] = f.join("\t")
-    event["@timestamp"] = LogStash::Timestamp.new(Time.strptime("#{event["datum"]} #{event["zeit"]}+01:00", '%Y/%m/%d %H:%M:%S%z'))
+    event["@timestamp"] = LogStash::Timestamp.new(Time.strptime("#{event["datum"]} #{event["zeit"]}", '%Y/%m/%d %H:%M:%S'))
 
     # Ereignisse Datenuebernahme untersuchen
     @dueb_helper.parse(event)

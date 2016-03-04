@@ -3,7 +3,7 @@
 #
 require 'spec_helper'
 require "logstash/filters/errlog"
-require 'date'
+require 'time'
 
 describe LogStash::Filters::Errlog do
   describe "DUEB Ereignisse" do
