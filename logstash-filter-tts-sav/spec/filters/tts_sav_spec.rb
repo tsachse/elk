@@ -69,7 +69,7 @@ describe LogStash::Filters::TtsSav do
       insist { subject[0]["zeit"] } == "05:39:02"
       insist { subject[0]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S'))
 
-      insist { subject[1]["teltyp"] } == "---"
+      insist { subject[1]["unbekannt"] } == "???"
       insist { subject[1]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S'))
     end
   end

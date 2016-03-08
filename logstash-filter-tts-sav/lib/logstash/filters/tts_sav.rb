@@ -50,7 +50,7 @@ class LogStash::Filters::TtsSav < LogStash::Filters::Base
     end
 
     if !event.include?('teltyp')
-      event["teltyp"] = "---"
+      event["unbekannt"] = event["message"][0,3]
     end
 
 
