@@ -16,8 +16,10 @@ VOLUME ["/data"]
 VOLUME ["/config"]
 
 RUN mkdir /plugins
-COPY plugins/* /plugins
+COPY plugins/* /plugins/
 RUN /opt/logstash/bin/plugin install /plugins/logstash-filter-errlog-0.1.0.gem
+RUN /opt/logstash/bin/plugin install /plugins/logstash-filter-hdllv-http-log-0.1.0.gem
+RUN /opt/logstash/bin/plugin install /plugins/logstash-filter-tts-sav-0.1.0.gem
 
 
 WORKDIR /opt/logstash
