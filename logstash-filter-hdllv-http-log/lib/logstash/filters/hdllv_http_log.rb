@@ -56,7 +56,6 @@ class LogStash::Filters::HdllvHttpLog < LogStash::Filters::Base
     event["nachricht"] = f.join(" ")
     event["@timestamp"] = LogStash::Timestamp.new(Time.strptime("#{event["datum"]} #{event["zeit"]}", '%Y.%m.%d %H:%M:%S'))
 
-
     # filter_matched should go in the last line of our successful code
     filter_matched(event)
   end # def filter
