@@ -7,17 +7,20 @@ class DuebHelper
   def initialize
     @lv_tag = 0
     @lv_scheibe = 0
+    @startzeit = Hash.new
   end
 
   def parse(event)
     nachricht = event["nachricht"]
     programm = event["programm"]
+    zeit = Time.strptime("#{event["datum"]} #{event["zeit"]}", '%Y/%m/%d %H:%M:%S') 
 
     if nachricht =~ /^LVS\s(\d+)\/(\d+)\sbegonnen/
       event["gewerk"] = GEWERK
       event["ereignis"] = 'Datenuebertragung begonnen'
       event["lv_tag"] = $1.to_i
       event["lv_scheibe"] = $2.to_i
+      startzeit(event["lv_tag"], event["lv_scheibe"], 'Daten fuer LV vollstaendig', zeit) 
     end
 
     if nachricht =~ /^CLS-File.+Umbenennung nach dat7(\d\d\d)(\d)/
@@ -40,6 +43,7 @@ class DuebHelper
       event["ereignis"] = 'Daten fuer LV vollstaendig'
       event["lv_tag"] = $1.to_i
       event["lv_scheibe"] = $2.to_i
+      event["dauer"] = dauer(event["lv_tag"], event["lv_scheibe"], event["ereignis"], zeit) 
     end
 
     if programm == "dueb_main.pl" &&
@@ -48,6 +52,7 @@ class DuebHelper
       event["ereignis"] = 'Import Start'
       event["lv_tag"] = $1.to_i
       event["lv_scheibe"] = $2.to_i
+      startzeit(event["lv_tag"], event["lv_scheibe"], 'Import Ende', zeit) 
     end
 
     if programm == "dueb_main.pl" &&
@@ -56,6 +61,7 @@ class DuebHelper
       event["ereignis"] = 'Import Ende'
       event["lv_tag"] = $1.to_i
       event["lv_scheibe"] = $2.to_i
+      event["dauer"] = dauer(event["lv_tag"], event["lv_scheibe"], event["ereignis"], zeit) 
     end
 
     programm_liste = {
@@ -75,6 +81,7 @@ class DuebHelper
       event["ereignis"] = programm_liste[programm] + ' Start'
       @lv_tag = event["lv_tag"] = $1.to_i
       @lv_scheibe = event["lv_scheibe"] = $2.to_i
+      startzeit(event["lv_tag"], event["lv_scheibe"], programm, zeit) 
     end
 
     if programm_liste.has_key?(programm) &&
@@ -83,6 +90,7 @@ class DuebHelper
       event["ereignis"] = programm_liste[programm] + ' Ende'
       event["lv_tag"] = @lv_tag
       event["lv_scheibe"] = @lv_scheibe
+      event["dauer"] = dauer(event["lv_tag"], event["lv_scheibe"], programm, zeit) 
     end
 
     if nachricht =~ /^Telegramm LAG\s+(\d\d\d\d)(\d\d\d\d)/
@@ -95,5 +103,16 @@ class DuebHelper
     event["ereignis_code"] = event["ereignis"].downcase.gsub(/[^\w]/,'_') if event.include?("ereignis")
 
     event
+  end
+
+  def startzeit(lv_tag, lv_scheibe, ereignis, zeit)
+    @startzeit["#{lv_tag}_#{lv_scheibe}_#{ereignis}"] = zeit
+  end
+
+  def dauer(lv_tag, lv_scheibe, ereignis, zeit)
+    # Falls keine Startzeit vorhanden, wird zeit verwendet, was zu einer
+    # Dauer von 0.0 fuehrt.
+    # Ist etwas schraeg, ber was solls.
+    zeit -  (@startzeit["#{lv_tag}_#{lv_scheibe}_#{ereignis}"] || zeit)
   end
 end

@@ -74,13 +74,14 @@ describe LogStash::Filters::Errlog do
 
     sample([
       "2016/01/29\t10:05:12\tddhpit01\t11773\thdllv\tdueb_main_batchbildung.pl\tSTART -c /opt/hdllv/config/hdllv.conf -t 049 -s 1",
-      "2016/01/29\t10:05:12\tddhpit01\t11773\thdllv\tdueb_main_batchbildung.pl\tENDE"
+      "2016/01/29\t11:05:12\tddhpit01\t11773\thdllv\tdueb_main_batchbildung.pl\tENDE"
     ]) do
       insist { subject[1]["nachricht"] } == "ENDE"
       insist { subject[1]["gewerk"] } == "DUEB"
       insist { subject[1]["ereignis"] } == "Batchbildung Ende"
       insist { subject[1]["lv_tag"] } == 49
       insist { subject[1]["lv_scheibe"] } == 1
+      insist { subject[1]["dauer"] } == 3600.0
     end
 
     sample("2016/01/29\t10:05:12\tddhpit01\t11773\thdllv\tdueb_main_lo_anfrage.pl\tSTART -c /opt/hdllv/config/hdllv.conf -t 049 -s 1") do
@@ -114,6 +115,19 @@ describe LogStash::Filters::Errlog do
       insist { subject["lv_tag"] } == 49
       insist { subject["lv_scheibe"] } == 1
     end
+
+    sample(["2016/01/29\t10:05:12\tddhpit01\t11773\thdllv\tdueb\tLVS 049/1 begonnen","2016/01/29\t11:05:12\tddhpit01\t11773\thdllv\tdueb_ftp.pl\tLVS 49/1 vollstaendig"]) do
+      insist { subject[1]["lv_tag"] } == 49
+      insist { subject[1]["lv_scheibe"] } == 1
+      insist { subject[1]["dauer"] } == 3600.0
+    end
+
+    sample(["2016/01/29\t10:05:12\tddhpit01\t11773\thdllv\tdueb_main.pl\tStart Tag 049, Scheibe 1","2016/01/29\t11:05:12\tddhpit01\t11773\thdllv\tdueb_main.pl\tEnde LVS 049/1"]) do
+      insist { subject[1]["lv_tag"] } == 49
+      insist { subject[1]["lv_scheibe"] } == 1
+      insist { subject[1]["dauer"] } == 3600.0
+    end
+
 
   end
 
