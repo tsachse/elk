@@ -3,6 +3,8 @@ PATH
   specs:
     logstash-filter-errlog (0.1.0)
       logstash-core (>= 2.0.0.beta2, < 3.0.0)
+      tzinfo
+      tzinfo-data
 
 GEM
   remote: https://rubygems.org/
@@ -75,6 +77,10 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
+    tzinfo-data (1.2016.3)
+      tzinfo (>= 1.0.0)
 
 PLATFORMS
   java

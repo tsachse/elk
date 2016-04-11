@@ -4,6 +4,7 @@
 require 'spec_helper'
 require "logstash/filters/errlog"
 require 'time'
+require 'tzinfo'
 
 describe LogStash::Filters::Errlog do
   describe "Felder splitten" do
@@ -23,7 +24,8 @@ describe LogStash::Filters::Errlog do
       insist { subject["nutzer"] } == "hdllv"
       insist { subject["programm"] } == "dueb_ftp.pl"
       insist { subject["nachricht"] } == "SIGTERM erhalten"
-      insist { subject["@timestamp"] } == LogStash::Timestamp.new(Time.strptime('2016/01/29 10:05:12', '%Y/%m/%d %H:%M:%S'))
+      tz = TZInfo::Timezone.get('Europe/Berlin')  
+      insist { subject["@timestamp"] } == LogStash::Timestamp.new(tz.local_to_utc(Time.strptime('2016/01/29 10:05:12', '%Y/%m/%d %H:%M:%S')))
     end
   end
 
@@ -47,7 +49,8 @@ describe LogStash::Filters::Errlog do
       insist { subject[0]["nutzer"] } == "hdllv"
       insist { subject[0]["programm"] } == "dueb_ftp.pl"
       insist { subject[0]["nachricht"] } == "SIGTERM erhalten"
-      insist { subject[0]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime('2016/01/29 10:05:12', '%Y/%m/%d %H:%M:%S'))
+      tz = TZInfo::Timezone.get('Europe/Berlin')  
+      insist { subject[0]["@timestamp"] } == LogStash::Timestamp.new(tz.local_to_utc(Time.strptime('2016/01/29 10:05:12', '%Y/%m/%d %H:%M:%S')))
 
       insist { subject[1]["datum"] } == "2016/01/29"
       insist { subject[1]["zeit"] } == "10:05:12"
@@ -56,7 +59,7 @@ describe LogStash::Filters::Errlog do
       insist { subject[1]["nutzer"] } == "hdllv"
       insist { subject[1]["programm"] } == "dueb_ftp.pl"
       insist { subject[1]["nachricht"] } == "Folgezeile"
-      insist { subject[1]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime('2016/01/29 10:05:12', '%Y/%m/%d %H:%M:%S'))
+      insist { subject[1]["@timestamp"] } == LogStash::Timestamp.new(tz.local_to_utc(Time.strptime('2016/01/29 10:05:12', '%Y/%m/%d %H:%M:%S')))
     end
   end
 end

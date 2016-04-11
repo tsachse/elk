@@ -2,6 +2,7 @@
 require "logstash/filters/base"
 require "logstash/namespace"
 require "time"
+require 'tzinfo' 
 
 # require File.dirname(__FILE__) + '/../helpers/' + 'dueb_helper.rb'
 
@@ -35,7 +36,7 @@ class LogStash::Filters::TtsSav < LogStash::Filters::Base
     #@hostname = 'X'
     @zeit = Hash.new
     @config = parse_config
-
+    @tz = TZInfo::Timezone.get('Europe/Berlin')
   end # def register
 
   public
@@ -44,7 +45,11 @@ class LogStash::Filters::TtsSav < LogStash::Filters::Base
 
     path = event["path"] || '____'
     if event.include?('teltyp') && event["teltyp"] == "BOF"
-      @zeit[path] = event["@timestamp"] = LogStash::Timestamp.new(Time.strptime("#{event["datum"]} #{event["zeit"]}", '%m.%d.%y %H:%M:%S'))
+      @zeit[path] = event["@timestamp"] = LogStash::Timestamp.new(
+	@tz.local_to_utc(
+	  Time.strptime("#{event["datum"]} #{event["zeit"]}", '%m.%d.%y %H:%M:%S')
+	)
+      )
     else
       event["@timestamp"] = @zeit[path]
     end

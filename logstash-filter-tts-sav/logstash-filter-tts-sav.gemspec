@@ -20,5 +20,7 @@ Gem::Specification.new do |s|
   # Gem dependencies
   # s.add_runtime_dependency "logstash-core", ">= 2.0.0", "< 3.0.0"
   s.add_runtime_dependency "logstash-core", ">= 2.0.0.beta2", "< 3.0.0"
+  s.add_runtime_dependency "tzinfo"
+  s.add_runtime_dependency "tzinfo-data"
   s.add_development_dependency 'logstash-devutils'
 end

@@ -98,6 +98,7 @@ class DuebHelper
       event["ereignis"] = 'LO-Antwort'
       event["lv_tag"] = $1.to_i
       event["lv_scheibe"] = $2.to_i
+      event["dauer"] = dauer(event["lv_tag"], event["lv_scheibe"], "dueb_main_lo_anfrage.pl", zeit) 
     end
 
     event["ereignis_code"] = event["ereignis"].downcase.gsub(/[^\w]/,'_') if event.include?("ereignis")

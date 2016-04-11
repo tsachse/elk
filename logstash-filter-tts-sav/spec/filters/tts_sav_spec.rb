@@ -4,6 +4,7 @@
 require 'spec_helper'
 require "logstash/filters/tts_sav"
 require 'time'
+require 'tzinfo' 
 
 describe LogStash::Filters::TtsSav do
   describe "Telegrammbeschreibung einlesen" do
@@ -19,7 +20,8 @@ describe LogStash::Filters::TtsSav do
       insist { subject["teltyp"] } == "BOF"
       insist { subject["datum"] } == "08.03.16"
       insist { subject["zeit"] } == "05:39:02"
-      insist { subject["@timestamp"] } == LogStash::Timestamp.new(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S'))
+      tz = TZInfo::Timezone.get('Europe/Berlin')
+      insist { subject["@timestamp"] } == LogStash::Timestamp.new(tz.local_to_utc(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S')))
     end
   end
 
@@ -39,7 +41,8 @@ describe LogStash::Filters::TtsSav do
       insist { subject[0]["teltyp"] } == "BOF"
       insist { subject[0]["datum"] } == "08.03.16"
       insist { subject[0]["zeit"] } == "05:39:02"
-      insist { subject[0]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S'))
+      tz = TZInfo::Timezone.get('Europe/Berlin')
+      insist { subject[0]["@timestamp"] } == LogStash::Timestamp.new(tz.local_to_utc(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S')))
 
       insist { subject[1]["teltyp"] } == "TG1"
       insist { subject[1]["lfd_tag"] } == "067"
@@ -47,7 +50,7 @@ describe LogStash::Filters::TtsSav do
       insist { subject[1]["sub_bat_nr"] } == "1"
       insist { subject[1]["trigger_typ"] } == "4"
       insist { subject[1]["fuellgrad"] } == "002"
-      insist { subject[1]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S'))
+      insist { subject[1]["@timestamp"] } == LogStash::Timestamp.new(tz.local_to_utc(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S')))
     end
   end
 
@@ -67,10 +70,11 @@ describe LogStash::Filters::TtsSav do
       insist { subject[0]["teltyp"] } == "BOF"
       insist { subject[0]["datum"] } == "08.03.16"
       insist { subject[0]["zeit"] } == "05:39:02"
-      insist { subject[0]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S'))
+      tz = TZInfo::Timezone.get('Europe/Berlin')
+      insist { subject[0]["@timestamp"] } == LogStash::Timestamp.new(tz.local_to_utc(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S')))
 
       insist { subject[1]["unbekannt"] } == "???"
-      insist { subject[1]["@timestamp"] } == LogStash::Timestamp.new(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S'))
+      insist { subject[1]["@timestamp"] } == LogStash::Timestamp.new(tz.local_to_utc(Time.strptime("08.03.16 05:39:02", '%m.%d.%y %H:%M:%S')))
     end
   end
 

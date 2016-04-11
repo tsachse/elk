@@ -2,6 +2,7 @@
 require "logstash/filters/base"
 require "logstash/namespace"
 require "time"
+require 'tzinfo' 
 
 # require File.dirname(__FILE__) + '/../helpers/' + 'dueb_helper.rb'
 
@@ -33,7 +34,7 @@ class LogStash::Filters::HdllvHttpLog < LogStash::Filters::Base
     @datum    = '2000.01.01' 
     @zeit     = '00:00:00' 
     @hostname = 'X'
-
+    @tz = TZInfo::Timezone.get('Europe/Berlin')
   end # def register
 
   public
@@ -54,7 +55,11 @@ class LogStash::Filters::HdllvHttpLog < LogStash::Filters::Base
     end
 
     event["nachricht"] = f.join(" ")
-    event["@timestamp"] = LogStash::Timestamp.new(Time.strptime("#{event["datum"]} #{event["zeit"]}", '%Y.%m.%d %H:%M:%S'))
+    event["@timestamp"] = LogStash::Timestamp.new(
+      @tz.local_to_utc(
+	Time.strptime("#{event["datum"]} #{event["zeit"]}", '%Y.%m.%d %H:%M:%S')
+      )
+    )
 
     # filter_matched should go in the last line of our successful code
     filter_matched(event)

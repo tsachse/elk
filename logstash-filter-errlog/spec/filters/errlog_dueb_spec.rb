@@ -128,6 +128,12 @@ describe LogStash::Filters::Errlog do
       insist { subject[1]["dauer"] } == 3600.0
     end
 
+    sample(["2016/01/29\t10:05:12\tddhpit01\t11773\thdllv\tdueb_main_lo_anfrage.pl\tSTART -c /opt/hdllv/config/hdllv.conf -t 049 -s 1","2016/01/29\t11:05:12\tddhpit01\t11773\thdllv\tdueb_main_lo_anfrage.pl\tTelegramm LAG           00490001 empfangen"]) do
+      insist { subject[1]["lv_tag"] } == 49
+      insist { subject[1]["lv_scheibe"] } == 1
+      insist { subject[1]["dauer"] } == 3600.0
+    end
+
 
   end
 
