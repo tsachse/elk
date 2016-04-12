@@ -46,7 +46,8 @@ class LogStash::Filters::TtsSav < LogStash::Filters::Base
     path = event["path"] || '____'
     if event.include?('teltyp') && event["teltyp"] == "BOF"
       begin
-        t = Time.strptime("#{event["datum"]} #{event["zeit"]}", '%m.%d.%y %H:%M:%S')
+	event["datum"].gsub!(/\./,'/')
+        t = Time.strptime("#{event["datum"]} #{event["zeit"]}", '%m/%d/%y %H:%M:%S')
       rescue
 	t = Time.now
 	event["datum_falsch"] = "#{event["datum"]} #{event["zeit"]}"
