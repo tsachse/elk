@@ -55,9 +55,10 @@ class LogStash::Filters::HdllvHttpLog < LogStash::Filters::Base
     end
 
     event["nachricht"] = f.join(" ")
+    event["datum"].gsub!(/\./,'/')
     event["@timestamp"] = LogStash::Timestamp.new(
       @tz.local_to_utc(
-	Time.strptime("#{event["datum"]} #{event["zeit"]}", '%Y.%m.%d %H:%M:%S')
+	Time.strptime("#{event["datum"]} #{event["zeit"]}", '%Y/%m/%d %H:%M:%S')
       )
     )
 
