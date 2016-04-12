@@ -45,11 +45,13 @@ class LogStash::Filters::TtsSav < LogStash::Filters::Base
 
     path = event["path"] || '____'
     if event.include?('teltyp') && event["teltyp"] == "BOF"
-      @zeit[path] = event["@timestamp"] = LogStash::Timestamp.new(
-	@tz.local_to_utc(
-	  Time.strptime("#{event["datum"]} #{event["zeit"]}", '%m.%d.%y %H:%M:%S')
-	)
-      )
+      begin
+        t = Time.strptime("#{event["datum"]} #{event["zeit"]}", '%m.%d.%y %H:%M:%S')
+      rescue
+	t = Time.now
+	event["datum_falsch"] = "#{event["datum"]} #{event["zeit"]}"
+      end
+      @zeit[path] = event["@timestamp"] = LogStash::Timestamp.new( @tz.local_to_utc(t))
     else
       event["@timestamp"] = @zeit[path]
     end

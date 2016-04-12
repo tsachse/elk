@@ -78,4 +78,25 @@ describe LogStash::Filters::TtsSav do
     end
   end
 
+  describe "Falscher Zeitstempel im Telegrammblock vearbeiten" do
+    let(:config) do <<-CONFIG
+      filter {
+        tts_sav {
+        }
+      }
+    CONFIG
+    end
+
+    sample(["BOFWT01TRKR08003.1605:39:020452","TG10675014002","EOF04520003"]) do
+      expect(subject).to be_a(Array)
+      insist { subject.size } == 3
+
+      insist { subject[0]["teltyp"] } == "BOF"
+      insist { subject[0]["datum"] } == "08003.16"
+      insist { subject[0]["datum_falsch"] } == "08003.16 05:39:02"
+
+
+    end
+  end
+
 end
